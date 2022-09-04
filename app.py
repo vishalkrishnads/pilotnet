@@ -1,12 +1,18 @@
 from utils.screen import clear, warn, message, error
 from utils.collect import Collector
 from utils.piloterror import PilotError
-from src.data import Data
+from src.data import Data, PilotData
 from src.model import PilotNet
-import carla, random, time, datetime
+import carla, random, time, datetime, os
+
+# you could totally enable a feature by which a model trained in a session can be used as fallback if there are no trained models available
+# but for this, PilotNet would have to compile and store a model in memory from the start, which may hinder performance of other utilities
+# you can do this by uncommenting this line and commenting any lines starting with PilotNet() from this file
+# pilotnet = PilotNet(160, 120)
 
 class Menu():
 
+    @staticmethod
     def run_1():
         'Train using generated data'
         data = Data()
@@ -40,6 +46,7 @@ class Menu():
         except:
             raise PilotError('Some unexpected error occured during training. Please try again.')
 
+    @staticmethod
     def run_2():
         'Generate new data'
         message('Connecting to CARLA world')
@@ -50,7 +57,7 @@ class Menu():
         except:
             try:
                 warn('There seems to be a problem with your CARLA server. Retrying with WSL address...')
-                client = carla.Client('172.18.112.1', 2000) # the host IP can be found with $(hostname).local from WSL
+                client = carla.Client('172.17.128.1', 2000) # the host IP can be found with $(hostname).local from WSL
                 world = client.get_world()
                 message('Connected to CARLA server')
             except:
@@ -59,14 +66,48 @@ class Menu():
         clear()
         collector = Collector(world, time)
 
+    @staticmethod
     def run_3():
         'Predict on a single video frame'
-        print("Doing 3")
-
+        i = 0
+        models = []
+        message('Fetching list of saved models...')
+        with os.scandir('models/') as saved_models:
+            for model in saved_models:
+                print(f'{i+1}. {model.name}')
+                models.append(model.name)
+                i+=1
+        if len(models) <= 0:
+            warn('There are no saved models. Using previously trained models from the same session is totally possible but disabled due to performance issues.')
+            message('Simply train a model from the menu and try again...')
+        else:
+            choice = int(input('Choose the model you wanna use (1) >> ') or 0)
+            while choice not in models:
+                try:
+                    choice = models[choice-1]
+                    message(f'{choice} selected.')
+                except:
+                    error('Wrong choice. Try again...')
+            model = choice
+            path = input('Enter path relative to this directory >> ')
+            try:
+                frame = PilotData(isTraining=False, path_to=path)
+            except:
+                raise PilotError("That didn't work. The path you entered must be wrong. Start again...")
+            predictions = PilotNet(160, 120, predict=True).predict(frame, given_model=model)
+            clear()
+            message('Predictions are...')
+            message(f'Steering angle: {predictions[0][0][0]}')
+            message(f'Throttle: {predictions[1][0][0]}')
+            message(f'Brake: {predictions[2][0][0]}')
+            input('Press [ENTER] to continue...')
+            
+    @staticmethod
     def run_4():
         'Predict on live video feed'
         raise PilotError("Um sorry bruh. Live video prediction isn't available yet. I'm working on it keep an eye here.")
 
+    @staticmethod
     def run_5():
         'Wrap up. I wanna quit.'
         message('Hope you enjoyed PilotNet. Report any issues on GitHub..')

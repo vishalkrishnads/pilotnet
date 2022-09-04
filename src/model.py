@@ -8,10 +8,10 @@ from tensorflow.keras import layers
 import datetime
 
 class PilotNet():
-    def __init__(self, width, height):
+    def __init__(self, width, height, predict=False):
         self.image_height = height
         self.image_width = width
-        self.model = self.build_model()
+        self.model = self.build_model() if predict == False else []
     
     def build_model(self):
         inputs = keras.Input(name='input_shape', shape=(self.image_height, self.image_width, 3))
@@ -64,5 +64,14 @@ class PilotNet():
         input('\nPress [ENTER] to continue...')
         self.model.save(f"models/{name}.h5")
     
-    def predict(self, data):
-        pass
+    # this method can be used for enabling the feature mentioned in app.py but needs more work
+    def predict(self, data, given_model = 'default'):
+        if given_model != 'default':
+            try:
+                model = keras.models.load_model(f'models/{given_model}', custom_objects = {"tf": tf})
+            except:
+                raise PilotError('An unexpected error occured when loading the saved model. Please rerun...')
+        else: model = self.model
+        predictions = model.predict(data.image)
+        return predictions
+        
