@@ -2,11 +2,13 @@
 # One key difference from the original paper is that we have 3 output neurons (throttle, brake & steering)
 
 import tensorflow as tf
+import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
+import datetime
 
 class PilotNet():
-    def __init__(self, height, width):
+    def __init__(self, width, height):
         self.image_height = height
         self.image_width = width
         self.model = self.build_model()
@@ -55,8 +57,12 @@ class PilotNet():
         model.summary()
         return model
 
-    def train(self, data):
-        pass
+    def train(self, name: 'Filename for saving model', data: 'Training data as an instance of pilotnet.src.Data()', epochs: 'Number of epochs to run' = 30, steps: 'Number of steps per epoch' = 10, steps_val: 'Number of steps to validate' = 10, batch_size: 'Batch size to be used for training' = 64):
+        self.model.fit(np.array([frame.image for frame in data.training_data()]), np.array([(frame.steering, frame.throttle, frame.brake) for frame in data.training_data()]), batch_size=batch_size, epochs=epochs, steps_per_epoch=steps, validation_split=0.2, validation_steps=steps_val)
+        stats = self.model.evaluate(np.array([frame.image for frame in data.testing_data()]), np.array([(frame.steering, frame.throttle, frame.brake) for frame in data.testing_data()]), verbose=2)
+        print(f'Model accuracy: {stats[1]}\nModel loss: {stats[0]}')
+        input('\nPress [ENTER] to continue...')
+        self.model.save(f"models/{name}.h5")
     
     def predict(self, data):
         pass
