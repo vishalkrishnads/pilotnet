@@ -8,7 +8,7 @@ import carla, datetime, pygame
 try:
     display = pygame.display.set_mode((1900, 1000))
 except:
-    warn("Failed to spawn live feed from vehicle. If you're on WSL, this happens as the OS doesn't have a display device yet. Otherwise, check your pygame installation.")
+    warn("Failed to spawn live feed view for data collector. If you're on WSL, this happens as the OS doesn't have a display device yet. Otherwise, check your pygame installation.")
     pass
 
 class Collector:
