@@ -50,7 +50,8 @@ Follow the steps to install and try this locally in your system
 
 ## Issues
 1. Training
-    * No issues yet
+    * If your machine is not that compute intensive, this model can't be forced to take in high quality images, say like 1920x1080. If you try to do this, it will raise an exception that the resources have finished and quit. Try scaling the quality up slowly from the default values and see where it sticks for your system.
+    * Sometimes, you might get too excited and try to train 100 epochs on 2 minutes of recordings. This will obviously end with an error saying that the generator can't produce enough data for all these epochs. Either record more data or reduce epochs.
 
 2. Data Generator
     * In WSL, the data generator has a fallback system for WSL connections. But just in case yours is failing, try using the `ping $(hostname).local` command to find the host IP address. Now, open `app.py` and change the IP from `127.27.144.1` to your IP address in `Collector.run2()`. Restart.
