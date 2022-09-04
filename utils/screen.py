@@ -1,7 +1,6 @@
 # Two simple functions banner() & clear() pretty self explanatory
 
 from termcolor import colored
-from utils.piloterror import PilotError
 import os
 
 def banner():
@@ -27,7 +26,7 @@ def clear(print_banner: 'Whether to print the banner. Defaults to True' = True):
     }
     if os.name in command.keys():
         os.system(command[os.name])
-    else: raise PilotError('Unsupported operating system. Open an issue at https://github.com/vishalkrishnads/pilotnet/issues')
+    else: error('Unsupported operating system. Open an issue at https://github.com/vishalkrishnads/pilotnet/issues')
     if print_banner:
         banner()
 
