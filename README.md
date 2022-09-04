@@ -6,7 +6,7 @@ End-to-End Learning Steers a Car](https://arxiv.org/pdf/1704.07911.pdf) by NVIDI
 Follow the steps to install and try this locally in your system
 
 ### Prerequisites
-1. [Anaconda/Miniconda]()
+1. [Anaconda/Miniconda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
 2. [CARLA simulator](http://carla.org)
 
 ### Steps
@@ -23,7 +23,7 @@ Follow the steps to install and try this locally in your system
     conda create -n "pilotnet" python=3.8.0
     conda activate pilotnet
     ```
-4. Install tensorflow into the environment by following the [instructions](https://www.tensorflow.org/install/pip#windows-wsl2) in the official documentation. If you're not using a [CUDA capable GPU](https://developer.nvidia.com/cuda-gpus) or don't have a GPU, skip to the next step.
+4. Install tensorflow into the environment by following the [instructions](https://www.tensorflow.org/install/) in the official documentation. If you're not using a [CUDA capable GPU](https://developer.nvidia.com/cuda-gpus) or don't have a GPU, skip to the next step.
 5. Install other required modules
     ```
     pip install -r requirements.txt
@@ -76,7 +76,7 @@ Follow the steps to install and try this locally in your system
     * If your disk doesn't have enough empty space, then it's obvious why the generator crashses. It stores recordings in the `recordings/` directory. Try clearing space.
 
 3. Predicting on frame
-    * Nothing yet
+    * The only possible issue here would be to enter paths of stuff that doesn't exist. Maybe a test image or saved model. The script will crash if you enter something wrong. Try double checking the paths.
 
 ## Directory structure
 ```
