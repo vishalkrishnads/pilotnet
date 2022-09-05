@@ -5,12 +5,6 @@ from utils.piloterror import PilotError
 import numpy as np
 import carla, datetime, pygame
 
-try:
-    display = pygame.display.set_mode((1900, 1000))
-except:
-    warn("Failed to spawn live feed view for data collector. If you're on WSL, this happens as the OS doesn't have a display device yet. Otherwise, check your pygame installation.")
-    pass
-
 class Collector:
     def __init__(self, world, time):
         self.start_time = datetime.datetime.now()
@@ -19,6 +13,11 @@ class Collector:
         try:
             pygame.init()
         except: pass
+        try:
+            display = pygame.display.set_mode((1900, 1000))
+        except:
+            warn("Failed to spawn live feed view for data collector. If you're on WSL, this happens as the OS doesn't have a display device yet. Otherwise, check your pygame installation.")
+            pass
         self.directory = f"recordings/{datetime.datetime.now().strftime('%Y-%m-%d@%H:%M:%S')}"
         self.start(time)
     
