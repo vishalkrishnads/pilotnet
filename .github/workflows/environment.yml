@@ -1,0 +1,15 @@
+name: pilotnet
+channels:
+  - defaults
+dependencies:
+  - python=3.8.0
+  - numpy
+  - pip
+  - pip:
+    - opencv-python
+    - tensorflow
+    - datetime
+    - time
+    - termcolor
+    - carla
+    - pygame
