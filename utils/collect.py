@@ -3,7 +3,7 @@
 from utils.screen import clear, message, warn
 from utils.piloterror import PilotError
 import numpy as np
-import carla, datetime, pygame
+import carla, datetime, pygame, os
 
 class Collector:
     def __init__(self, world, time):
@@ -14,15 +14,15 @@ class Collector:
             pygame.init()
         except: pass
         try:
-            display = pygame.display.set_mode((1900, 1000))
+            self.display = pygame.display.set_mode((1900, 1000))
         except:
             warn("Failed to spawn live feed view for data collector. If you're on WSL, this happens as the OS doesn't have a display device yet. Otherwise, check your pygame installation.")
             pass
-        self.directory = f"recordings/{datetime.datetime.now().strftime('%Y-%m-%d@%H:%M:%S')}"
+        self.directory = f'recordings/{datetime.datetime.now().strftime("%Y-%m-%d@%H.%M.%S" if os.name is "nt" else "%Y-%m-%d@%H:%M:%S" )}'
         self.start(time)
     
     def record(self, image):
-        control = self.vehicle.get_control()
+        control = self.vehicle.get_control()        
         image.save_to_disk(f'{self.directory}/{[int((datetime.datetime.now() - self.start_time).total_seconds()), control.steer, control.throttle, control.brake]}.png')
         
         # we now convert image into a raw image to show in our display
@@ -37,10 +37,10 @@ class Collector:
         # show the frame in display & update it
         try:
             surf = pygame.surfarray.make_surface(np.rot90(array, 1))
-            display.blit(surf, (0, 0))
+            self.display.blit(surf, (0, 0))
             pygame.display.update()
         except:
-            pass
+            warn('Display is not working')
 
     def start(self, time):
 
